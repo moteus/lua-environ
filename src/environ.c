@@ -7,6 +7,8 @@
 #include <ctype.h>
 
 /*
+ENV_DECLARE_ENVIRON                          extern char **environ
+
 ENV_PUTENV_HAS_UNDERLINE                     _putenv
 
 ENV_SET_BY_PUTENV                            putenv("KEY=value")
@@ -34,6 +36,7 @@ ENV_UNSET_BY_SETENV_NULL                     setenv("KEY", NULL, 1)
 #  define ENV_PUTENV_HAS_UNDERLINE
 #  define ENV_SET_BY_PUTENV
 #  define ENV_UNSET_BY_PUTENV_EQ
+#  define ENV_DECLARE_ENVIRON 0
 #endif
 
 #if !defined(ENV_SET_BY_PUTENV) && !defined(ENV_SET_BY_SETENV)
@@ -48,6 +51,10 @@ ENV_UNSET_BY_SETENV_NULL                     setenv("KEY", NULL, 1)
 #  if _BSD_SOURCE || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600
 #    define ENV_UNSET_BY_UNSETENV
 #  endif
+#endif
+
+#if !defined(ENV_DECLARE_ENVIRON)
+#  define ENV_DECLARE_ENVIRON 1
 #endif
 
 static int str_upper (lua_State *L, int idx){
@@ -414,6 +421,10 @@ static int env_setenv(lua_State *L){
 
 //}-----------------------------------------
 
+#if ENV_DECLARE_ENVIRON
+extern char **environ;
+#endif
+
 static int l_getenviron(lua_State *L){
   int as_map = lua_toboolean(L,1);
   char **e = environ;
@@ -422,21 +433,23 @@ static int l_getenviron(lua_State *L){
   luaL_checktype(L, 2, LUA_TNONE);
 
   lua_newtable(L);
-  if(as_map) while(var = *(e++)){
-    const char *eq = strchr( ('=' == var[0])?&var[1]:&var[0], '=' );
-    if(!eq){
+  if(e){
+    if(as_map) while(var = *(e++)){
+      const char *eq = strchr( ('=' == var[0])?&var[1]:&var[0], '=' );
+      if(!eq){
+        lua_pushstring(L, var);
+        lua_rawseti(L,-2,++i);
+        continue;
+      }
+      lua_pushlstring( L, var, eq-var );
+      str_upper(L, -1);
+      lua_pushstring(L, &eq[1]);
+      lua_rawset(L, -3);
+    }
+    else while(var = *(e++)){
       lua_pushstring(L, var);
       lua_rawseti(L,-2,++i);
-      continue;
     }
-    lua_pushlstring( L, var, eq-var );
-    str_upper(L, -1);
-    lua_pushstring(L, &eq[1]);
-    lua_rawset(L, -3);
-  }
-  else while(var = *(e++)){
-    lua_pushstring(L, var);
-    lua_rawseti(L,-2,++i);
   }
   return 1;
 }
