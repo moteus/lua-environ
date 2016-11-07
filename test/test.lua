@@ -96,6 +96,15 @@ it('environ get map', function()
   assert_equal('hello', t['X'])
 end)
 
+it('var with spaces', function()
+  assert_true(env.setenv('HELLO WORLD', 'hello, world!!!'))
+  assert_equal('hello, world!!!', env.getenv('HELLO WORLD'))
+  assert_equal('hello, world!!!', env.expand('%HELLO WORLD%'))
+  assert_equal('hello, world!!!', env.expand('${HELLO WORLD}'))
+  assert_equal('hello, world!!!', env.expand('$(HELLO WORLD)'))
+  assert_equal('$HELLO WORLD', env.expand('$HELLO WORLD'))
+end)
+
 end
 
 if eutils.IS_WINDOWS then

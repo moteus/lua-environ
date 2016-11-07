@@ -6,12 +6,13 @@ local D_WIN = function(s) return '%' .. s .. '%' end
 local D_PSX = function(s) return '$' .. s end
 local D     = IS_WINDOWS and D_WIN or D_PSX
 
-local P, C, Cs, Ct, Cp, S = lpeg.P, lpeg.C, lpeg.Cs, lpeg.Ct, lpeg.Cp, lpeg.S
+local P, C, Cs, Ct, Cp, S, R = lpeg.P, lpeg.C, lpeg.Cs, lpeg.Ct, lpeg.Cp, lpeg.S, lpeg.R
 
 local any = P(1)
-local sym = any-S':${}% \t'
+local sym  = R'AZ' + R'az' + R'09' + S'_'
+local sym2 = any-S':;${}%()'
 local esc = (P'%%' / '%%') + (P'$$' / '$')
-local var = (P'%' * C(sym^1) * '%') + (P'${' * C(sym^1) * '}') + (P'$' * C(sym^1))
+local var = (P'%' * C(sym2^1) * '%') + (P'${' * C(sym2^1) * '}') + (P'$(' * C(sym2^1) * ')') + (P'$' * C(sym^1))
 
 local function MakeSubPattern(fn)
   return Cs((esc + (var / fn) + any)^0)
