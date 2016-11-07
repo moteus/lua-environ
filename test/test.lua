@@ -27,12 +27,14 @@ local env = environ.process
 
 function teardown()
   env.setenv('X')
+  env.setenv('x')
   env.setenv('Y')
   env.setenv('Z')
 end
 
 function setup()
   env.setenv('X')
+  env.setenv('x')
   env.setenv('Y')
   env.setenv('Z')
 end
@@ -43,10 +45,23 @@ it('set variable', function()
   assert_equal('hello', env.getenv('X'))
 end)
 
+if eutils.IS_WINDOWS then
+
 it('get variable is not case sensivity', function()
   assert_true(env.setenv('X', 'hello'))
   assert_equal('hello', env.getenv('x'))
 end)
+
+else
+
+it('get variable is not case sensivity', function()
+  assert_true(env.setenv('X', 'hello'))
+  assert_true(env.setenv('x', 'world'))
+  assert_equal('hello', env.getenv('X'))
+  assert_equal('world', env.getenv('x'))
+end)
+
+end
 
 it('expand variable', function()
   assert_true(env.setenv('X', 'hello'))
