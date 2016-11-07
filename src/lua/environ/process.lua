@@ -44,15 +44,19 @@ local environ  = function (upper)
 
   return r
 end
+local enum     = function () return next, environ() end
 
 local process = {
   getenv  = getenv;
   setenv  = setenv;
   expand  = expenv;
   environ = environ;
+  enum    = enum;
 
   update  = update;
 }
+
+process.ENV = utils.make_env_map(process)
 
 require "environ".process = process
 

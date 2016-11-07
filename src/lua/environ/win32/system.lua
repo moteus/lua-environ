@@ -76,12 +76,18 @@ local function make_module(path)
 
   local update = core.update_win or function() end
 
-  return {
+  local enum   = function () return next, environ() end
+
+  local env = {
     environ     = environ;
     getenv      = getenv;
     setenv      = setenv;
-    update      = update
+    update      = update;
+    enum        = enum;
   }
+
+  env.ENV = utils.make_env_map(env)
+  return env
 end
 
 return {

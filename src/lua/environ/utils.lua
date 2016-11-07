@@ -55,9 +55,24 @@ local function split_first(str, sep, plain, pos)
   return str
 end
 
+local function make_map(mod)
+  local env = setmetatable({},{
+    __index = function(_, k)
+      return mod.getenv(k)
+    end;
+    __newindex = function(_, k, v)
+      return mod.setenv(k, v, true)
+    end;
+    __call = function(_, upper)
+      return mod.environ(upper)
+    end;
+  })
+end
+
 return {
   IS_WINDOWS   = IS_WINDOWS;
   build_expand = BuildExpand;
   normalize    = Normalize;
   split_first  = split_first;
+  make_env_map = make_map;
 }
