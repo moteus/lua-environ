@@ -60,8 +60,9 @@ function set_reg_key(path, key, value, value_type)
     if not ok then
       return nil, err
     end
+    return true
   end
-  return get_reg_key(path, key)
+  return nil, hkey or 'can not open: `' .. path .. '` for write'
 end
 
 function del_reg_key(path, key)

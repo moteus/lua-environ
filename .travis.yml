@@ -34,9 +34,13 @@ before_install:
 install:
   - luarocks make rockspecs/environ-scm-0.rockspec CFLAGS="-O2 -fPIC -ftest-coverage -fprofile-arcs" LIBFLAG="-shared --coverage"
 
+before_script:
+  - luarocks show lunitx           || luarocks install lunitx
+  - luarocks show luacov-coveralls || luarocks install luacov-coveralls
+
 script:
   - cd test
-  - lua test.lua
+  - lunit.sh test.lua
 
 notifications:
   email:

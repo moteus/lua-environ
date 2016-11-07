@@ -9,7 +9,7 @@ local D     = IS_WINDOWS and D_WIN or D_PSX
 local P, C, Cs, Ct, Cp, S = lpeg.P, lpeg.C, lpeg.Cs, lpeg.Ct, lpeg.Cp, lpeg.S
 
 local any = P(1)
-local sym = any-S':${}%'
+local sym = any-S':${}% \t'
 local esc = (P'%%' / '%%') + (P'$$' / '$')
 local var = (P'%' * C(sym^1) * '%') + (P'${' * C(sym^1) * '}') + (P'$' * C(sym^1))
 

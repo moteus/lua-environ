@@ -21,6 +21,11 @@ before_build:
 build_script:
   - luarocks make rockspecs\environ-scm-0.rockspec
 
+before_test:
+  - luarocks show winreg || luarocks install winreg --from https://luarocks.org/dev
+  - luarocks show lunitx || luarocks install lunitx
+  - luarocks show luacov-coveralls || luarocks install luacov-coveralls
+
 test_script:
   - cd test
   - lua test.lua
