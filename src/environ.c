@@ -6,6 +6,10 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifdef __APPLE__
+#include <crt_externs.h>
+#endif
+
 /*
 ENV_DECLARE_ENVIRON                          extern char **environ
 
@@ -43,6 +47,9 @@ ENV_UNSET_BY_SETENV_NULL                     setenv("KEY", NULL, 1)
 #  if _BSD_SOURCE || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600
 #    define ENV_SET_BY_SETENV
 #  endif
+#  if defined(__APPLE__)
+#    define ENV_SET_BY_SETENV
+#  endif
 #endif
 
 #if !defined(ENV_UNSET_BY_PUTENV) && !defined(ENV_UNSET_BY_PUTENV_EQ) &&\
@@ -50,6 +57,16 @@ ENV_UNSET_BY_SETENV_NULL                     setenv("KEY", NULL, 1)
     !defined(ENV_UNSET_BY_SETENV_NULL)
 #  if _BSD_SOURCE || _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600
 #    define ENV_UNSET_BY_UNSETENV
+#  endif
+#  if defined(__APPLE__)
+#    define ENV_UNSET_BY_UNSETENV
+#  endif
+#endif
+
+#if !defined(ENV_DECLARE_ENVIRON)
+#  if defined(__APPLE__)
+#    define environ (*_NSGetEnviron())
+#    define ENV_DECLARE_ENVIRON 0
 #  endif
 #endif
 
