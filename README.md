@@ -34,5 +34,5 @@ print(process.expand('$ProgramFiles/myapp'))
 print(process.expand('${ProgramData}/myapp'))
 
 -- Can access to environment using `ENV` proxy table.
-process.PATH="%ProgramFiles%/myapp;%PATH%"
+process.ENV.PATH="%ProgramFiles%/myapp;%PATH%"
 ```
