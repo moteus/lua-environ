@@ -22,10 +22,10 @@ branches:
     - master
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install python; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - pip install --user hererocks
   - hererocks here -r^ --$LUA
-  - export PATH=$PATH:$PWD/here/bin
+  - source here/bin/activate
 
 install:
   - luarocks make rockspecs/environ-scm-0.rockspec

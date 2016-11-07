@@ -90,6 +90,12 @@ it('ENV map set expanded variable', function()
   assert_equal('hello hello', env.getenv('Y'))
 end)
 
+it('environ get map', function()
+  assert_true(env.setenv('X', 'hello'))
+  local t = assert_table(env.environ())
+  assert_equal('hello', t['X'])
+end)
+
 end
 
 if eutils.IS_WINDOWS then
@@ -134,6 +140,11 @@ it('ENV map set normalized variable', function()
   assert_equal('%Y% %Y%', env.getenv('X'))
 end)
 
+it('environ get map', function()
+  assert_true(env.setenv('X', 'hello'))
+  local t = assert_table(env.environ())
+  assert_equal('hello', t['X'])
+end)
 
 end
 
