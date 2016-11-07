@@ -1,0 +1,50 @@
+PROJECT = 'environ'
+
+if LUA_VER == '5.3' then
+  LUA_NEED = 'lua53'
+  LUA_DIR  = ENV.LUA_DIR_5_3 or ENV.LUA_DIR
+  LUA_RUNNER = 'lua53'
+elseif LUA_VER == '5.2' then
+  LUA_NEED = 'lua52'
+  LUA_DIR  = ENV.LUA_DIR_5_2 or ENV.LUA_DIR
+  LUA_RUNNER = 'lua52'
+else
+  LUA_NEED = 'lua51'
+  LUA_DIR  = ENV.LUA_DIR
+  LUA_RUNNER = 'lua5.1'
+end
+
+ROOT    = ROOT or J(LUA_DIR, 'libs', PROJECT)
+LUADIR  = LUADIR or J(ROOT, 'share')
+LIBDIR  = LIBDIR or J(ROOT, 'share')
+DYNAMIC = as_bool(DYNAMIC, false)
+WINVER  = IF(WINDOWS, WINVER or '501', '')
+
+DEFS = L{
+  IF(DEBUG,   {'_DEBUG', 'DEBUG'},'NDEBUG');
+  IF(WINDOWS, {'WIN32','_WIN32','_WINDOWS'});
+  IF(MSVC,    {'_CRT_SECURE_NO_WARNINGS', '_WIN32_WINNT=0x' .. WINVER});
+}
+
+core =  c.shared{'core',
+  base     = 'src';
+  src      = '*.c';
+  defines  = DEFS;
+  needs    = LUA_NEED;
+  libs     = IF(WINDOWS, 'user32');
+  dynamic  = DYNAMIC;
+}
+
+target('build', core)
+
+install = target('install', {
+  file.group{odir=LUADIR;             src = J('src', 'lua', '*.*'); recurse = true };
+  file.group{odir=J(LIBDIR, PROJECT); src = core                                   };
+  file.group{odir=J(ROOT, 'test');    src = J('test','*.*'); recurse = true        };
+})
+
+target('test', install, function()
+  run_test("test.lua")
+end)
+
+default('build')
