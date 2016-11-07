@@ -14,7 +14,7 @@ local esc = (P'%%' / '%%') + (P'$$' / '$')
 local var = (P'%' * C(sym^1) * '%') + (P'${' * C(sym^1) * '}') + (P'$' * C(sym^1))
 
 local function MakeSubPattern(fn)
-  return Cs((esc + (var / D_PSX) + any)^0)
+  return Cs((esc + (var / fn) + any)^0)
 end
 
 local function BuildExpand(getenv)
@@ -67,6 +67,7 @@ local function make_map(mod)
       return mod.environ(upper)
     end;
   })
+  return env
 end
 
 return {
