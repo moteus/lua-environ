@@ -22,7 +22,7 @@ build_script:
   - luarocks make rockspecs\environ-scm-0.rockspec
 
 before_test:
-  - luarocks show winreg || luarocks install winreg --from https://luarocks.org/dev
+  - luarocks show winreg || luarocks install winreg
   - luarocks show lunitx || luarocks install lunitx
   - luarocks show luacov-coveralls || luarocks install luacov-coveralls
 
