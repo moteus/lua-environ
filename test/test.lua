@@ -11,10 +11,12 @@ local print, require = print, require
 local environ = require "environ"
 local eutils  = require "environ.utils"
 
+local IS_LUA_51 = not not string.find(_VERSION, '5.1', nil, true)
+
 print("------------------------------------")
 print("Module    name: " .. environ._NAME);
 print("Module version: " .. environ._VERSION);
-print("Lua    version: " .. (_G.jit and _G.jit.version or _G._VERSION))
+print("Lua    version: " .. (jit and jit.version or _VERSION))
 print("------------------------------------")
 print("")
 
@@ -104,6 +106,20 @@ it('var with spaces', function()
   assert_equal('hello, world!!!', env.expand('$(HELLO WORLD)'))
   assert_equal('$HELLO WORLD', env.expand('$HELLO WORLD'))
 end)
+
+if not IS_LUA_51 then
+
+it('iterate over vars', function()
+  assert_true(env.setenv('X', 'hello'))
+  local found
+  for k, v in pairs(env.ENV) do
+    found = (k == 'X') and (v == 'hello')
+    if found then break end
+  end
+  assert_true(found)
+end)
+
+end
 
 end
 

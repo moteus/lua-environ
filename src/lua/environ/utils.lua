@@ -67,6 +67,9 @@ local function make_map(mod)
     __call = function(_, upper)
       return mod.environ(upper)
     end;
+    __pairs = function()
+      return next, mod.environ()
+    end;
   })
   return env
 end
