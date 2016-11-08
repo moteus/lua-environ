@@ -6,7 +6,7 @@ local utils       = require "utils"
 local TEST_CASE   = require "lunit".TEST_CASE
 local RUN, IT = utils.RUN, utils.IT
 
-local print, require = print, require
+local print, require, pairs = print, require, pairs
 
 local environ = require "environ"
 local eutils  = require "environ.utils"
