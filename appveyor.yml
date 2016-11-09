@@ -3,13 +3,17 @@ version: 0.1.0.{build}
 environment:
   matrix:
   - LUA: "lua 5.1"
-  # - LUA: "lua 5.2"
-  # - LUA: "lua 5.3"
+  - LUA: "lua 5.2"
+  - LUA: "lua 5.3"
 
 platform:
-  # - x64
-  # - x86
+  - x64
+  - x86
   - mingw
+
+matrix:
+  allow_failures:
+    - platform: mingw
 
 before_build:
   - set PATH=C:\Python27\Scripts;%PATH%
@@ -22,15 +26,14 @@ before_build:
   - call env\bin\activate
 
 build_script:
-  # ld seems can not make output dir
+  # `ld` seems can not make output dir
   - mkdir environ
   - luarocks make rockspecs\environ-scm-0.rockspec
 
 before_test:
-  - luarocks show winreg || luarocks install winreg
-  - luarocks show lunitx || luarocks install lunitx
-  - luarocks show luacheck || luarocks install luacheck
-  - luarocks show luacov-coveralls || luarocks install luacov-coveralls
+  - luarocks show winreg >nul 2>&1 || luarocks install winreg
+  - luarocks show lunitx >nul 2>&1 || luarocks install lunitx
+  - luarocks show luacheck >nul 2>&1 || luarocks install luacheck
 
 test_script:
   - cd test
