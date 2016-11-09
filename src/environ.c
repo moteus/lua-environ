@@ -52,7 +52,7 @@ ENV_UNSET_BY_SETENV_NULL                     setenv("KEY", NULL, 1)
 #    define ENV_SET_BY_SETENV
 #  endif
 #  if defined(_WIN32)
-#    define ENV_SET_BY_SETENV
+#    define ENV_SET_BY_PUTENV
 #  endif
 #endif
 
@@ -66,8 +66,8 @@ ENV_UNSET_BY_SETENV_NULL                     setenv("KEY", NULL, 1)
 #    define ENV_UNSET_BY_UNSETENV
 #  endif
 #  if defined(_WIN32)
-#    define ENV_UNSET_BY_UNSETENV
-#    define ENV_UNSETENV_RET_VOID
+#    define ENV_UNSET_BY_PUTENV_EQ
+#    define ENV_DECLARE_ENVIRON 0
 #  endif
 #endif
 

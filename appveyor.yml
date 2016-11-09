@@ -22,6 +22,8 @@ before_build:
   - call env\bin\activate
 
 build_script:
+  # ld seems can not make output dir
+  - mkdir environ
   - luarocks make rockspecs\environ-scm-0.rockspec
 
 before_test:
