@@ -17,6 +17,7 @@ dependencies = {
 }
 build = {
   type = "builtin",
+  copy_directories = {'examples', 'test'},
   platforms = {
     windows = {
       modules = {
