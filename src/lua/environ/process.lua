@@ -52,8 +52,6 @@ local process = {
   expand  = expenv;
   environ = environ;
   enum    = enum;
-
-  update  = update;
 }
 
 process.ENV = utils.make_env_map(process)

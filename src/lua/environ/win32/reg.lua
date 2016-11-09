@@ -20,7 +20,7 @@ end
 local get_reg_key,set_reg_key,del_reg_key,get_reg_keys
 do
 
-function regopen(k, mode)
+local function regopen(k, mode)
   mode = mode or 'r'
   return winreg.openkey(k, mode)
 end
@@ -55,7 +55,7 @@ function set_reg_key(path, key, value, value_type)
 
   local ok, hkey = pcall(regopen, path, 'w')
   if ok and hkey then
-    local ok, err = pcall(hkey.setvalue, hkey, key, value, value_type)
+    local err ok, err = pcall(hkey.setvalue, hkey, key, value, value_type)
     hkey:close()
     if not ok then
       return nil, err
@@ -72,7 +72,7 @@ function del_reg_key(path, key)
   end
   local ok, hkey = pcall(regopen, path, 'w')
   if ok and hkey then
-    local ok, err = pcall(hkey.deletevalue, hkey, key)
+    local err ok, err = pcall(hkey.deletevalue, hkey, key)
     hkey:close()
     if not ok then
       return nil, err

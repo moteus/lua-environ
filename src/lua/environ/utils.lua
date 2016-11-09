@@ -6,7 +6,7 @@ local D_WIN = function(s) return '%' .. s .. '%' end
 local D_PSX = function(s) return '$' .. s end
 local D     = IS_WINDOWS and D_WIN or D_PSX
 
-local P, C, Cs, Ct, Cp, S, R = lpeg.P, lpeg.C, lpeg.Cs, lpeg.Ct, lpeg.Cp, lpeg.S, lpeg.R
+local P, C, Cs, S, R = lpeg.P, lpeg.C, lpeg.Cs, lpeg.S, lpeg.R
 
 local any = P(1)
 local sym  = R'AZ' + R'az' + R'09' + S'_'

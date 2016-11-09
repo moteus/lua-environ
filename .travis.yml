@@ -31,11 +31,13 @@ install:
   - luarocks make rockspecs/environ-scm-0.rockspec
 
 before_script:
+  - luarocks install luacheck
   - luarocks install lunitx
 
 script:
   - cd test
   - lunit.sh test.lua
+  - luacheck ../src/lua
 
 notifications:
   email:

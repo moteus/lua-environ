@@ -6,9 +6,6 @@ local utils = require "environ.utils"
 local reg   = require "environ.win32.reg"
 local core  = require "environ.core"
 
-local type, assert, pcall, pairs = 
-      type, assert, pcall, pairs 
-
 local function get_env_type(value)
   if nil ~= string.find(value, '%', 1, true) then
     return reg.EXPAND_SZ
@@ -41,7 +38,7 @@ local function set_raw_env(path, name, value, normalize)
   return reg.del_key(path, name)
 end
 
-local function del_raw_env(path, name)
+local function del_raw_env(path, name) -- luacheck: ignore
   path = assert(PATHS[string.lower(path)])
   return reg.del_key(path, name)
 end
@@ -71,8 +68,6 @@ local function make_module(path)
   local environ = function(upper)
     return get_raw_env_t(path, upper)
   end
-
-  local expenv = utils.build_expand(getenv)
 
   local update = core.update_win or function() end
 
