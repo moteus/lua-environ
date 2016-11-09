@@ -21,6 +21,7 @@ ENV_SET_BY_SETENV                            setenv("KEY", "value", 1)
 ENV_UNSET_BY_PUTENV                          putenv("KEY")
 ENV_UNSET_BY_PUTENV_EQ                       putenv("KEY=")
 ENV_UNSET_BY_UNSETENV                        unsetenv("KEY")
+ENV_UNSETENV_RET_VOID                        
 ENV_UNSET_BY_SETENV                          setenv("KEY", "", 1)
 ENV_UNSET_BY_SETENV_NULL                     setenv("KEY", NULL, 1)
 */
@@ -50,6 +51,9 @@ ENV_UNSET_BY_SETENV_NULL                     setenv("KEY", NULL, 1)
 #  if defined(__APPLE__)
 #    define ENV_SET_BY_SETENV
 #  endif
+#  if defined(_WIN32)
+#    define ENV_SET_BY_SETENV
+#  endif
 #endif
 
 #if !defined(ENV_UNSET_BY_PUTENV) && !defined(ENV_UNSET_BY_PUTENV_EQ) &&\
@@ -60,6 +64,10 @@ ENV_UNSET_BY_SETENV_NULL                     setenv("KEY", NULL, 1)
 #  endif
 #  if defined(__APPLE__)
 #    define ENV_UNSET_BY_UNSETENV
+#  endif
+#  if defined(_WIN32)
+#    define ENV_UNSET_BY_UNSETENV
+#    define ENV_UNSETENV_RET_VOID
 #  endif
 #endif
 
@@ -96,14 +104,20 @@ static int str_upper (lua_State *L, int idx){
 
 #ifdef ENV_EXPORT_WIN
 #include <windows.h>
-#include <strsafe.h>
 
-void push_lasterr(lua_State *L, LPTSTR lpszFunction) { 
-  LPVOID lpMsgBuf;
-  LPVOID lpDisplayBuf;
+#ifdef _MSC_VER
+#include <strsafe.h>
+#define _USE_STR_SAFE_
+#else
+#include <stdio.h>
+#endif
+
+void push_lasterr(lua_State *L, const char* lpszFunction) { 
+  char *lpMsgBuf;
+  char *lpDisplayBuf;
   DWORD dw = GetLastError(); 
 
-  FormatMessage(
+  FormatMessageA(
     FORMAT_MESSAGE_ALLOCATE_BUFFER | 
     FORMAT_MESSAGE_FROM_SYSTEM,
     NULL,
@@ -112,13 +126,24 @@ void push_lasterr(lua_State *L, LPTSTR lpszFunction) {
     (LPTSTR) &lpMsgBuf,
     0, NULL );
 
-  lpDisplayBuf = (LPVOID)LocalAlloc(LMEM_ZEROINIT, 
-    (lstrlen((LPCTSTR)lpMsgBuf)+lstrlen((LPCTSTR)lpszFunction)+40)*sizeof(TCHAR)); 
-  StringCchPrintf((LPTSTR)lpDisplayBuf, 
-    LocalSize(lpDisplayBuf),
-    TEXT("%s failed with error %d: %s"), 
-    lpszFunction, dw, lpMsgBuf);
-  
+  lpDisplayBuf = LocalAlloc(LMEM_ZEROINIT,
+    (lstrlen(lpMsgBuf)+lstrlen(lpszFunction)+40)
+  );
+
+  #ifdef _USE_STR_SAFE_
+  StringCchPrintfA(lpDisplayBuf,
+    LocalSize((LPVOID)lpDisplayBuf),
+    "%s failed with error %u: %s",
+    lpszFunction, dw, lpMsgBuf
+  );
+  #else
+  snprintf(lpDisplayBuf,
+    LocalSize((LPVOID)lpDisplayBuf),
+    "%s failed with error %u: %s",
+    lpszFunction, (unsigned int)dw, lpMsgBuf
+  );
+  #endif
+
   lua_pushstring(L,(LPTSTR)lpDisplayBuf);
   LocalFree(lpMsgBuf);
   LocalFree(lpDisplayBuf);
@@ -408,7 +433,11 @@ static int env_setenv(lua_State *L){
 #  endif
   return env_call_putenv(L);
 #elif defined(ENV_UNSET_BY_UNSETENV)
-  int ret = unsetenv(envKey);
+  int ret = 
+#  ifdef ENV_UNSETENV_RET_VOID
+  0;
+#  endif
+  unsetenv(envKey);
   if (ENV_SETENV_IS_ERROR(ret)) {
     lua_pushnil(L);
     lua_pushnumber(L, ret);
@@ -451,7 +480,7 @@ static int l_getenviron(lua_State *L){
 
   lua_newtable(L);
   if(e){
-    if(as_map) while(var = *(e++)){
+    if(as_map) while((var = *(e++))){
       const char *eq = strchr( ('=' == var[0])?&var[1]:&var[0], '=' );
       if(!eq){
         lua_pushstring(L, var);
@@ -463,7 +492,7 @@ static int l_getenviron(lua_State *L){
       lua_pushstring(L, &eq[1]);
       lua_rawset(L, -3);
     }
-    else while(var = *(e++)){
+    else while((var = *(e++))){
       lua_pushstring(L, var);
       lua_rawseti(L,-2,++i);
     }
