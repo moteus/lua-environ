@@ -6,6 +6,17 @@ local D_WIN = function(s) return '%' .. s .. '%' end
 local D_PSX = function(s) return '$' .. s end
 local D     = IS_WINDOWS and D_WIN or D_PSX
 
+-- Not safe. For test only.
+local function os_getenv(e)
+  local str = D(e)
+  local f = assert(io.popen('echo A' .. str .. 'A', 'r'))
+  local val = f:read("*all")
+  f:close()
+  if val then val = string.gsub(val, '\n$',''):sub(2,-2) end
+  if val == str then return nil end
+  return val
+end
+
 local P, C, Cs, S, R = lpeg.P, lpeg.C, lpeg.Cs, lpeg.S, lpeg.R
 
 local any = P(1)
@@ -80,4 +91,5 @@ return {
   normalize    = Normalize;
   split_first  = split_first;
   make_env_map = make_map;
+  os_getenv    = os_getenv;
 }

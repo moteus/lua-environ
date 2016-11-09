@@ -121,6 +121,11 @@ end)
 
 end
 
+it('should actually set envionment', function()
+  assert(env.setenv('X', 'HELLO'))
+  assert_equal('HELLO', eutils.os_getenv('X'))
+end)
+
 end
 
 if eutils.IS_WINDOWS then
