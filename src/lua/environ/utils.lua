@@ -3,7 +3,7 @@ local lpeg = require "lpeg"
 local IS_WINDOWS = (package.config:sub(1,1) == '\\')
 
 local D_WIN = function(s) return '%' .. s .. '%' end
-local D_PSX = function(s) return '$' .. s end
+local D_PSX = function(s) return '${' .. s .. '}' end
 local D     = IS_WINDOWS and D_WIN or D_PSX
 
 -- Not safe. For test only.
@@ -23,7 +23,7 @@ local any = P(1)
 local sym  = R'AZ' + R'az' + R'09' + S'_'
 local sym2 = any-S':;${}%()'
 local esc = (P'%%' / '%%') + (P'$$' / '$')
-local var = (P'%' * C(sym2^1) * '%') + (P'${' * C(sym2^1) * '}') + (P'$(' * C(sym2^1) * ')') + (P'$' * C(sym^1))
+local var = (P'%' * C(sym2^1) * '%') + (P'${' * C(sym2^1) * '}') + (P'$' * C(sym^1))
 
 local function MakeSubPattern(fn)
   return Cs((esc + (var / fn) + any)^0)

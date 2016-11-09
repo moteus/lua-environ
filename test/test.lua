@@ -103,8 +103,8 @@ it('var with spaces', function()
   assert_equal('hello, world!!!', env.getenv('HELLO WORLD'))
   assert_equal('hello, world!!!', env.expand('%HELLO WORLD%'))
   assert_equal('hello, world!!!', env.expand('${HELLO WORLD}'))
-  assert_equal('hello, world!!!', env.expand('$(HELLO WORLD)'))
-  assert_equal('$HELLO WORLD', env.expand('$HELLO WORLD'))
+  assert_equal('$(HELLO WORLD)',  env.expand('$(HELLO WORLD)'))
+  assert_equal('$HELLO WORLD',    env.expand('$HELLO WORLD'))
 end)
 
 if not IS_LUA_51 then
