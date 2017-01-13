@@ -6,11 +6,11 @@ local function get_int_valtype(type_name)
     return type_name
   end
   return assert(({
-    ["sz"]        = 1;  -- A null-terminated string string 
-    ["expand_sz"] = 2;  -- A null-terminated string that contains unexpanded references to environment variables, for example "%PATH%" string 
-    ["binary"]    = 3;  -- Binary data in any form string 
-    ["dword"]     = 4;  -- A 32-bit number number 
-    ["multi_sz"]  = 7;  -- 
+    ["sz"]        = 1;  -- A null-terminated string string
+    ["expand_sz"] = 2;  -- A null-terminated string that contains unexpanded references to environment variables, for example "%PATH%" string
+    ["binary"]    = 3;  -- Binary data in any form string
+    ["dword"]     = 4;  -- A 32-bit number number
+    ["multi_sz"]  = 7;  --
   })[string.lower(type_name)])
 end
 
@@ -68,7 +68,7 @@ end
 function del_reg_key(path, key)
   local v, vt = get_reg_key(path, key)
   if v == nil then
-    return vt == nil, vt 
+    return vt == nil, vt
   end
   local ok, hkey = pcall(regopen, path, 'w')
   if ok and hkey then

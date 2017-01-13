@@ -49,7 +49,7 @@ local win_pattern = MakeSubPattern(D_WIN)
 local sys_pattern = MakeSubPattern(D)
 
 Normalize = function(str, mode)
-  local pattern 
+  local pattern
   if mode == nil then pattern = sys_pattern
   elseif (mode == '$') or (mode == false) then pattern = psx_pattern
   elseif (mode == '%') or (mode == true)  then pattern = win_pattern

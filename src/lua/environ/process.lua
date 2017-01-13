@@ -17,7 +17,7 @@ local core   = require "environ.core"
 -- `=Exitcode`, `=C:`. CRT versions does not returns such values.
 --
 -- Note about expand function.
--- There exists `expand_win` but I think better use 
+-- There exists `expand_win` but I think better use
 -- custom function so it can be used same syntax on all
 -- platforms.
 --
@@ -33,7 +33,7 @@ end
 local environ_ = core.environ_win or core.environ
 local environ  = function (upper)
   if not environ_ then return nil, 'not supported' end
-  
+
   local t, r = environ_(), {}
 
   for _, str in ipairs(t) do
