@@ -2,24 +2,48 @@ language: c
 
 sudo: false
 
+# matrix:
+#   include:
+#     - compiler: ": Lua51osx"
+#       env: LUA="lua 5.1"
+#       os: osx
+#     - compiler: ": Lua51"
+#       env: LUA="lua 5.1"
+#       os: linux
+#     - compiler: ": Lua52"
+#       env: LUA="lua 5.2"
+#       os: linux
+#     - compiler: ": Lua53"
+#       env: LUA="lua 5.3"
+#       os: linux
+#     - compiler: ": LuaJIT20"
+#       env: LUA="luajit 2.0"
+#       os: linux
+#     - compiler: ": LuaJIT21"
+#       env: LUA="luajit 2.1"
+#       os: linux
+
 matrix:
   include:
-    - compiler: ": Lua51osx"
+    - compiler: gcc
       env: LUA="lua 5.1"
       os: osx
-    - compiler: ": Lua51"
+    - compiler: clang
+      env: LUA="lua 5.1"
+      os: osx
+    - compiler: gcc
       env: LUA="lua 5.1"
       os: linux
-    - compiler: ": Lua52"
+    - compiler: gcc
       env: LUA="lua 5.2"
       os: linux
-    - compiler: ": Lua53"
+    - compiler: gcc
       env: LUA="lua 5.3"
       os: linux
-    - compiler: ": LuaJIT20"
+    - compiler: gcc
       env: LUA="luajit 2.0"
       os: linux
-    - compiler: ": LuaJIT21"
+    - compiler: gcc
       env: LUA="luajit 2.1"
       os: linux
 
@@ -49,6 +73,9 @@ script:
   - cd test
   - lunit.sh test.lua
   - luacheck ../src/lua
+
+before_cache:
+  - luarocks remove environ
 
 notifications:
   email:
