@@ -7,7 +7,8 @@ local function get_int_valtype(type_name)
   end
   return assert(({
     ["sz"]        = 1;  -- A null-terminated string string
-    ["expand_sz"] = 2;  -- A null-terminated string that contains unexpanded references to environment variables, for example "%PATH%" string
+    ["expand_sz"] = 2;  -- A null-terminated string that contains unexpanded references to environment variables,
+                        -- for example "%PATH%" string
     ["binary"]    = 3;  -- Binary data in any form string
     ["dword"]     = 4;  -- A 32-bit number number
     ["multi_sz"]  = 7;  --
